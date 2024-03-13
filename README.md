@@ -7,5 +7,5 @@
 <h2>Sobre:</h2>
 
 <br/>
-<p>Uma API com funcionalidades como, cadastro de pacientes e medicos, agendamento de consulta e retorno com regras.</p>
+<p>Uma API criada em C# utilizando .NET 8.0 e Entity Framework, possui funcionalidades como: cadastro de pacientes e medicos, agendamento de consulta e retorno com regras.</p>
 <br/>
