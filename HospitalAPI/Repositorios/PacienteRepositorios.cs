@@ -1,7 +1,9 @@
 ﻿using HospitalAPI.Data;
 using HospitalAPI.Models;
 using HospitalAPI.Repositorios.Interfaces;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+using System.IO;
 
 namespace HospitalAPI.Repositorios
 {
@@ -29,6 +31,12 @@ namespace HospitalAPI.Repositorios
 
             return paciente;
         }
+
+        public async Task<PacienteModel> BuscarDocPorId(int id)
+        {
+            return await _context.Pacientes.FirstOrDefaultAsync(x => x.PacienteId == id);
+        }
+
         public async Task<PacienteModel> Atualizar(PacienteModel paciente, int id)
         {
             PacienteModel pacientePorId = await BuscarPacientePorId(id);
@@ -66,6 +74,7 @@ namespace HospitalAPI.Repositorios
             return true;
         }
 
-
     }
+
 }
+

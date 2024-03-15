@@ -1,5 +1,6 @@
 ﻿using HospitalAPI.Models;
 using HospitalAPI.Repositorios.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,7 +16,6 @@ namespace HospitalAPI.Controllers
         {
             _medicoRepositorios = medicoRepositorios;
         }
-
         [HttpGet]
         public async Task<ActionResult<List<MedicoModel>>> BuscarTodosMedicos()
         {
@@ -23,7 +23,6 @@ namespace HospitalAPI.Controllers
 
             return Ok(medicos);
         }
-
         [HttpGet("{id}")]
         public async Task<ActionResult<MedicoModel>> BuscarMedicoPorId(int id)
         {
@@ -31,7 +30,6 @@ namespace HospitalAPI.Controllers
 
             return Ok(medico);
         }
-
         [HttpPost]
         public async Task<ActionResult<MedicoModel>> Cadastrar([FromBody] MedicoModel medicoModel)
         {
@@ -39,7 +37,6 @@ namespace HospitalAPI.Controllers
 
             return Ok(medico);
         }
-
         [HttpPut("{id}")]
         public async Task<ActionResult<MedicoModel>> Atualizar([FromBody] MedicoModel medicoModel, int id)
         {
@@ -48,7 +45,6 @@ namespace HospitalAPI.Controllers
 
             return Ok(medico);
         }
-
         [HttpDelete("{id}")]
         public async Task<ActionResult<MedicoModel>> Apagar([FromBody] int id)
         {

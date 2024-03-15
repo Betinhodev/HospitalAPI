@@ -1,7 +1,10 @@
-﻿namespace HospitalAPI.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace HospitalAPI.Models
 {
     public class PacienteModel
     {
+        [Key]
         public int PacienteId { get; set; }
 
         public string? CPF { get; set; }
@@ -11,7 +14,6 @@
         public string? Endereco { get; set; }
 
         public string? DataDeNascimento { get; set; }
-
         public string? ImgDocumento { get; set; }
 
         public bool TemConvenio { get; set; }

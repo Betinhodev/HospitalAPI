@@ -1,6 +1,7 @@
 ﻿using HospitalAPI.Models;
 using HospitalAPI.Repositorios;
 using HospitalAPI.Repositorios.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -17,7 +18,6 @@ namespace HospitalAPI.Controllers
         {
             _convenioRepositorios = convenioRepositorios;
         }
-
         [HttpGet]
         public async Task<ActionResult<List<ConvenioModel>>> BuscarTodosConvenios()
         {
@@ -25,7 +25,6 @@ namespace HospitalAPI.Controllers
 
             return Ok(convenios);
         }
-
         [HttpGet("{id}")]
         public async Task<ActionResult<ConvenioModel>> BuscarConvenioPorId(int id)
         {
@@ -33,7 +32,6 @@ namespace HospitalAPI.Controllers
 
             return Ok(convenio);
         }
-
         [HttpPost]
         public async Task<ActionResult<ConvenioModel>> Cadastrar([FromBody] ConvenioModel convenioModel)
         {

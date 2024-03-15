@@ -1,6 +1,7 @@
 ﻿using HospitalAPI.Models;
 using HospitalAPI.Repositorios;
 using HospitalAPI.Repositorios.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client;
@@ -20,7 +21,6 @@ namespace HospitalAPI.Controllers
             _retornoRepositorios = retornoRepositorios;
             _consultaRepositorios = consultaRepositorios;
         }
-
         [HttpGet]
         public async Task<ActionResult<List<RetornoModel>>> BuscarTodosRepositorios()
         {
@@ -28,7 +28,6 @@ namespace HospitalAPI.Controllers
 
             return Ok(retornos);
         }
-
         [HttpGet("{id}")]
         public async Task<ActionResult<RetornoModel>> BuscarRetornoPorId(int id)
         {
@@ -37,7 +36,6 @@ namespace HospitalAPI.Controllers
 
             return Ok(retorno);
         }
-
         [HttpPost]
         public async Task<ActionResult<RetornoModel>> Cadastrar([FromBody] RetornoModel retornoModel, Guid id)
         {
@@ -48,7 +46,6 @@ namespace HospitalAPI.Controllers
 
             return Ok(retorno);
         }
-
         [HttpPut("{id}")]
         public async Task<ActionResult<RetornoModel>> Atualizar([FromBody] RetornoModel retornoModel, int id)
         {
@@ -57,7 +54,6 @@ namespace HospitalAPI.Controllers
 
             return Ok(consulta);
         }
-
         [HttpDelete("{id}")]
         public async Task<ActionResult<RetornoModel>> Apagar([FromBody] int id)
         {
