@@ -48,7 +48,7 @@ namespace HospitalAPI.Controllers
             }
 
             Guid guidDocConvenio = Guid.NewGuid();
-            var imgPath = Path.Combine("Imagens/", $"{guidDocConvenio + requestDto.imgDoc.FileName}");
+            var imgPath = Path.Combine("Imagens/", $"{guidDocConvenio}");
 
             using (FileStream stream = System.IO.File.Create(imgPath))
             {
