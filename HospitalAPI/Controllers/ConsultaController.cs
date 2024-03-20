@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PdfSharpCore;
 using PdfSharpCore.Pdf;
+using System.Globalization;
 using TheArtOfDev.HtmlRenderer.PdfSharp;
 
 namespace HospitalAPI.Controllers
@@ -82,22 +83,20 @@ namespace HospitalAPI.Controllers
             <title>Fatura Hospitalar</title>
             <style>
             body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 20px;
-            }
-
-            h1, h2, h3 {
-            margin: 0;
-            padding: 0;
+            background-color: #f0f6ff; /* Azul claro para o fundo */
+            color: #333; /* Cor de texto principal */
             }
 
             .container {
             max-width: 800px;
             margin: 0 auto;
-            background-color: #f4f4f4;
+            background-color: #fff; /* Fundo branco para o contêiner */
             padding: 20px;
-            border: 1px solid #ccc;
+            border-radius: 8px; /* Cantos arredondados */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
             }
 
             .header {
@@ -116,9 +115,13 @@ namespace HospitalAPI.Controllers
             }
 
             th, td {
-            border: 1px solid #ccc;
-            padding: 8px;
+            border: 1px solid #ddd; /* Cinza claro para bordas da tabela */
+            padding: 12px;
             text-align: left;
+            }
+
+            th {
+            background-color: #f0f6ff; /* Azul claro para cabeçalho da tabela */
             }
 
             .footer {
@@ -149,12 +152,12 @@ namespace HospitalAPI.Controllers
             if(paciente != null){
 
                 HtmlContent += "<p><strong>Nome: </strong>"+paciente.Nome+"</p>";
+                HtmlContent += "<p><strong>Data de Nascimento: </strong>"+paciente.DataDeNascimento+"</p>";
             }
             
                 
-            HtmlContent += @"<p><strong>Idade:</strong> 40 anos</p>
-            <p><strong>Gênero:</strong> Masculino</p>
-            <div>
+
+            HtmlContent += @"<div>
             <div class='invoice-items'>
             <h2>Itens da Fatura</h2>
             <table>
