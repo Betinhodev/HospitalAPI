@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HospitalAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialDB : Migration
+    public partial class AuthTeste : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -30,6 +30,8 @@ namespace HospitalAPI.Migrations
                 {
                     MedicoId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    CPF = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     Nome = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     ConsultaId = table.Column<int>(type: "int", nullable: true)
                 },
@@ -45,6 +47,7 @@ namespace HospitalAPI.Migrations
                     PacienteId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CPF = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     Nome = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Endereco = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DataDeNascimento = table.Column<string>(type: "nvarchar(max)", nullable: false),

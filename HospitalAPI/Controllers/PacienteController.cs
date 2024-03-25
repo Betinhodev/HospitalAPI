@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
 using System.Reflection.Metadata;
+using System.Security.Claims;
 
 namespace HospitalAPI.Controllers
 {
@@ -21,6 +22,8 @@ namespace HospitalAPI.Controllers
         {
             _pacienteRepositorios = pacienteRepositorios;
         }
+
+        [Authorize(Roles = "medico, admin")]
         [HttpGet]
         [Route("All", Name = "BuscaTodosPacientes")]
         public async Task<ActionResult<List<PacienteModel>>> BuscarTodosPacientes()
@@ -30,7 +33,7 @@ namespace HospitalAPI.Controllers
             return Ok(paciente);
         }
 
-
+        [Authorize(Roles = "medico ,admin")]
         [HttpGet("{id}")]
         public async Task<ActionResult<PacienteModel>> BuscarPacientePorId(int id)
         {
@@ -38,7 +41,7 @@ namespace HospitalAPI.Controllers
 
             return Ok(paciente);
         }
-
+        [Authorize(Roles = "medico, admin")]
         [HttpPost]
         public async Task<ActionResult<PacienteModel>> Cadastrar([FromForm] PacienteRequestDto requestDto)
         {
@@ -56,14 +59,13 @@ namespace HospitalAPI.Controllers
             }
 
             requestDto.ImgDocumento = imgPath;
-            requestDto.PacienteId = 0;
 
             PacienteModel paciente = await _pacienteRepositorios.Cadastrar(requestDto);
 
 
             return Ok(paciente);
         }
-
+        [Authorize(Roles = "medico,admin")]
         [HttpGet("MostrarDocumento")]
         public async Task<ActionResult<PacienteModel>> BuscarDocPorId(int id)
         {
@@ -84,16 +86,41 @@ namespace HospitalAPI.Controllers
             Byte[] b = System.IO.File.ReadAllBytes($"{imgPath}");
             return File(b, "image/png");
         }
-
+        [Authorize(Roles = "paciente, medico, admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult<PacienteModel>> Atualizar([FromBody] PacienteModel pacienteModel, int id)
         {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+            if(userIdClaim == null)
+                return Unauthorized("Token de autenticação inválido.");
+
+            int authenticatedUserId = int.Parse(userIdClaim.Value);
+
+            if (id != authenticatedUserId)
+                return Forbid("Você não tem permissão para atualizar os dados de outro paciente.");
+
+            if (User.IsInRole("paciente"))
+            {
+
+                PacienteModel pacienteExistente = await _pacienteRepositorios.BuscarPacientePorId(id);
+                if (pacienteExistente == null)
+                { 
+                    return NotFound("Paciente não encontrado"); 
+                }
+
+                pacienteExistente.Nome = pacienteModel.Nome;
+                pacienteExistente.DataDeNascimento = pacienteModel.DataDeNascimento;
+                pacienteExistente.Endereco = pacienteModel.Endereco;
+
+                
+            }
+
             pacienteModel.PacienteId = id;
             PacienteModel paciente = await _pacienteRepositorios.Atualizar(pacienteModel, id);
 
             return Ok(paciente);
         }
-
+        [Authorize(Roles = "admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<PacienteModel>> Apagar([FromBody] int id)
         {

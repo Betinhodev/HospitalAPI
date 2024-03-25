@@ -16,6 +16,7 @@ namespace HospitalAPI.Controllers
         {
             _medicoRepositorios = medicoRepositorios;
         }
+        [Authorize(Roles = "admin")]
         [HttpGet]
         public async Task<ActionResult<List<MedicoModel>>> BuscarTodosMedicos()
         {
@@ -23,6 +24,7 @@ namespace HospitalAPI.Controllers
 
             return Ok(medicos);
         }
+        [Authorize(Roles = "admin")]
         [HttpGet("{id}")]
         public async Task<ActionResult<MedicoModel>> BuscarMedicoPorId(int id)
         {
@@ -30,6 +32,7 @@ namespace HospitalAPI.Controllers
 
             return Ok(medico);
         }
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public async Task<ActionResult<MedicoModel>> Cadastrar([FromBody] MedicoModel medicoModel)
         {
@@ -37,6 +40,7 @@ namespace HospitalAPI.Controllers
 
             return Ok(medico);
         }
+        [Authorize(Roles = "admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult<MedicoModel>> Atualizar([FromBody] MedicoModel medicoModel, int id)
         {
@@ -45,6 +49,7 @@ namespace HospitalAPI.Controllers
 
             return Ok(medico);
         }
+        [Authorize(Roles = "admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<MedicoModel>> Apagar([FromBody] int id)
         {

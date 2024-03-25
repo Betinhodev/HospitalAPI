@@ -2,6 +2,7 @@
 using HospitalAPI.Data;
 using HospitalAPI.Repositorios;
 using HospitalAPI.Repositorios.Interfaces;
+using HospitalAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -48,7 +49,7 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-var key = Encoding.ASCII.GetBytes(HospitalAPI.Key.Secret);
+var key = Encoding.ASCII.GetBytes(HospitalAPI.Services.AuthenticationService.Key.Secret);
 
 builder.Services.AddAuthentication(x =>
 {
@@ -68,12 +69,14 @@ builder.Services.AddAuthentication(x =>
 });
 
 builder.Services.AddEntityFrameworkSqlServer().AddDbContext<HospitalAPIContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DataBase")));
+//builder.Services.AddDbContext<HospitalAPIContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("SQLite")));
 
 builder.Services.AddScoped<IMedicoRepositorios, MedicoRepositorios> ();
 builder.Services.AddScoped<IPacienteRepositorios, PacienteRepositorios> ();
 builder.Services.AddScoped<IConsultaRepositorios, ConsultaRepositorios> ();
 builder.Services.AddScoped<IConvenioRepositorios, ConvenioRepositorios> ();
 builder.Services.AddScoped<IRetornoRepositorios, RetornoRepositorios> ();
+builder.Services.AddScoped<AuthenticationService>();
 
 
 var app = builder.Build();

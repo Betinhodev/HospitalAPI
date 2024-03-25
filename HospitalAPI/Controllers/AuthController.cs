@@ -1,4 +1,7 @@
-﻿using HospitalAPI.Services;
+﻿using HospitalAPI.Data;
+using HospitalAPI.DTOs;
+using HospitalAPI.Models;
+using HospitalAPI.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,16 +11,23 @@ namespace HospitalAPI.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        [HttpPost]
-        public IActionResult Auth(string username, string password)
-        {
-            if (username == "medicoadm" && password == "123456")
-            {
-                var token = TokenService.GenerateToken(new Models.MedicoModel());
-                return Ok(token);
-            }
+        private readonly AuthenticationService _authenticationService;
 
+        public AuthController(AuthenticationService authenticationService)
+        {
+            _authenticationService = authenticationService;
+        }
+
+        [HttpPost]
+        public IActionResult Auth([FromForm] AuthRequest auth)
+        {
+           
+            var token = _authenticationService.AuthenticateUser(auth.CPF, auth.Password);
+            
+            if(token == null)
             return BadRequest("usuário ou senha incorreta.");
+
+            return Ok(new { token });
         }
     }
 }

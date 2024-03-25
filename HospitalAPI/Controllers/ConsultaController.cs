@@ -1,6 +1,7 @@
 ﻿using HospitalAPI.DTOs;
 using HospitalAPI.Models;
 using HospitalAPI.Repositorios.Interfaces;
+using HospitalAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -27,6 +28,7 @@ namespace HospitalAPI.Controllers
             _pacienteRepositorios = pacienteRepositorios;
         }
 
+        [Authorize(Roles = "paciente, medico, admin")]
         [HttpGet]
         public async Task<ActionResult<List<ConsultaModel>>> BuscarTodasConsultas()
         {
@@ -34,7 +36,7 @@ namespace HospitalAPI.Controllers
 
             return Ok(consultas);
         }
-        
+        [Authorize(Roles = "paciente, medico, admin")]
         [HttpGet("{id}")]
         public async Task<ActionResult<ConsultaModel>> BuscarConsultaPorId(Guid id)
         {
@@ -43,6 +45,8 @@ namespace HospitalAPI.Controllers
 
             return Ok(consulta);
         }
+
+        [Authorize(Roles = "medico, admin")]
         [HttpPost]
         public async Task<ActionResult<ConsultaModel>> Cadastrar([FromBody] ConsultaModel consultaModel, int id)
         {
@@ -54,7 +58,7 @@ namespace HospitalAPI.Controllers
 
             return Ok(consulta);
         }
-        
+        [Authorize(Roles = "medico, admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult<ConsultaModel>> Atualizar([FromBody] ConsultaModel consultaModel, Guid id)
         {
@@ -63,14 +67,14 @@ namespace HospitalAPI.Controllers
 
             return Ok(consulta);
         }
-        
+        [Authorize(Roles = "admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<ConsultaModel>> Apagar([FromBody] Guid id)
         {
             bool apagado = await _consultaRepositorios.Apagar(id);
             return Ok(apagado);
         }
-
+        [Authorize(Roles = "medico, admin")]
         [HttpGet("GerarPdf")]
         public async Task<ActionResult<ConsultaModel>> GerarPdf([FromQuery] Guid id)
         {

@@ -18,6 +18,7 @@ namespace HospitalAPI.Controllers
         {
             _convenioRepositorios = convenioRepositorios;
         }
+        [Authorize(Roles = "paciente, medico, admin")]
         [HttpGet]
         public async Task<ActionResult<List<ConvenioModel>>> BuscarTodosConvenios()
         {
@@ -25,6 +26,7 @@ namespace HospitalAPI.Controllers
 
             return Ok(convenios);
         }
+        [Authorize(Roles = "paciente, medico, admin")]
         [HttpGet("{id}")]
         public async Task<ActionResult<ConvenioModel>> BuscarConvenioPorId(int id)
         {
@@ -32,6 +34,7 @@ namespace HospitalAPI.Controllers
 
             return Ok(convenio);
         }
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public async Task<ActionResult<ConvenioModel>> Cadastrar([FromBody] ConvenioModel convenioModel)
         {
@@ -40,6 +43,7 @@ namespace HospitalAPI.Controllers
             return Ok(convenio);
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult<ConvenioModel>> Atualizar([FromBody] ConvenioModel convenioModel, int id)
         {
@@ -48,7 +52,7 @@ namespace HospitalAPI.Controllers
 
             return Ok(convenio);
         }
-
+        [Authorize(Roles = "admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<ConvenioModel>> Apagar([FromBody] int id)
         {
