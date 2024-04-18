@@ -1,15 +1,10 @@
-﻿using HospitalAPI.DTOs;
+﻿using HospitalAPI.Enums;
 using HospitalAPI.Models;
 using HospitalAPI.Repositorios.Interfaces;
-using HospitalAPI.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.ResponseCompression;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PdfSharpCore;
 using PdfSharpCore.Pdf;
-using System.Globalization;
 using TheArtOfDev.HtmlRenderer.PdfSharp;
 
 namespace HospitalAPI.Controllers
@@ -20,18 +15,20 @@ namespace HospitalAPI.Controllers
     {
         private readonly IConsultaRepositorios _consultaRepositorios;
         private readonly IPacienteRepositorios _pacienteRepositorios;
+        private readonly ILogger<ConsultaController> _logger;
 
-
-        public ConsultaController(IConsultaRepositorios consultaRepositorios, IPacienteRepositorios pacienteRepositorios)
+        public ConsultaController(IConsultaRepositorios consultaRepositorios, IPacienteRepositorios pacienteRepositorios, ILogger<ConsultaController> logger)
         {
             _consultaRepositorios = consultaRepositorios;
             _pacienteRepositorios = pacienteRepositorios;
+            _logger = logger;   
         }
 
         [Authorize(Roles = "paciente, medico, admin")]
         [HttpGet]
         public async Task<ActionResult<List<ConsultaModel>>> BuscarTodasConsultas()
         {
+            _logger.LogInformation("Realizada busca de todas as consultas cadastradas.");
             List<ConsultaModel> consultas = await _consultaRepositorios.BuscarTodasConsultas();
 
             return Ok(consultas);
@@ -40,6 +37,8 @@ namespace HospitalAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ConsultaModel>> BuscarConsultaPorId(Guid id)
         {
+            _logger.LogInformation($"Realizada busca de consulta - Id: {id}");
+
             ConsultaModel consulta = await _consultaRepositorios.BuscarConsultaPorId(id);
             
 
@@ -48,8 +47,10 @@ namespace HospitalAPI.Controllers
 
         [Authorize(Roles = "medico, admin")]
         [HttpPost]
-        public async Task<ActionResult<ConsultaModel>> Cadastrar([FromBody] ConsultaModel consultaModel, int id)
+        public async Task<ActionResult<ConsultaModel>> Cadastrar([FromForm] ConsultaModel consultaModel, int id)
         {
+
+            _logger.LogInformation("Cadastro de nova consulta realizado.");
             var paciente = await _pacienteRepositorios.BuscarPacientePorId(id);
             decimal valor = paciente.TemConvenio ? 0 : 100;
             consultaModel.Valor = valor;
@@ -58,6 +59,7 @@ namespace HospitalAPI.Controllers
 
             return Ok(consulta);
         }
+
         [Authorize(Roles = "medico, admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult<ConsultaModel>> Atualizar([FromBody] ConsultaModel consultaModel, Guid id)
@@ -67,13 +69,16 @@ namespace HospitalAPI.Controllers
 
             return Ok(consulta);
         }
+
         [Authorize(Roles = "admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<ConsultaModel>> Apagar([FromBody] Guid id)
         {
+            _logger.LogInformation($"Realizada exclusão da consulta - Id: {id}");
             bool apagado = await _consultaRepositorios.Apagar(id);
             return Ok(apagado);
         }
+
         [Authorize(Roles = "medico, admin")]
         [HttpGet("GerarPdf")]
         public async Task<ActionResult<ConsultaModel>> GerarPdf([FromQuery] Guid id)
@@ -201,6 +206,15 @@ namespace HospitalAPI.Controllers
             string contentType = "application/pdf";
             return File(response, contentType ,fileName);
 
+        }
+
+        [HttpGet("FiltrarConsultas")]
+        public async Task<ActionResult<ConsultaModel>> FiltrarConsultas([FromQuery] int pacienteId, StatusConsulta status)
+        {
+            //Busca paciente por Id
+            List<ConsultaModel> consulta = await _consultaRepositorios.FiltrarConsultas(pacienteId, status);
+
+            return Ok(consulta);
         }
     }
 }

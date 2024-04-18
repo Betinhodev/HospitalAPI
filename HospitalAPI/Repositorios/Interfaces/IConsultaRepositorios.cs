@@ -1,4 +1,5 @@
-﻿using HospitalAPI.Models;
+﻿using HospitalAPI.Enums;
+using HospitalAPI.Models;
 
 namespace HospitalAPI.Repositorios.Interfaces
 {
@@ -13,5 +14,7 @@ namespace HospitalAPI.Repositorios.Interfaces
         Task<ConsultaModel> Atualizar(ConsultaModel consulta, Guid id);
 
         Task<bool> Apagar(Guid id);
+
+        Task<List<ConsultaModel>> FiltrarConsultas(int pacienteId, StatusConsulta status);
     }
 }

@@ -14,6 +14,8 @@ namespace HospitalAPI.Data.Map
             builder.Property(x => x.ConsultaId).IsRequired();
             builder.Property(x => x.Data).IsRequired();
             builder.Property(x => x.Status).IsRequired();
+            builder.HasOne(x => x.Paciente);
+            builder.HasOne(x => x.Medico);
         }
 
     }

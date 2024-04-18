@@ -1,7 +1,6 @@
 ﻿using HospitalAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace HospitalAPI.Data.Map
 {
@@ -20,6 +19,9 @@ namespace HospitalAPI.Data.Map
             builder.Property(x => x.ConvenioId);
             builder.Property(x => x.ConsultaId);
             builder.HasMany(x => x.Consulta);
+            builder.HasMany(x => x.Laudo);
+            builder.HasMany(x => x.Exame);
+            builder.HasMany(x => x.Retorno);
         }
 
     }

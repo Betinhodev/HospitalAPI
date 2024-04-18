@@ -1,10 +1,7 @@
 ﻿using HospitalAPI.Models;
-using HospitalAPI.Repositorios;
 using HospitalAPI.Repositorios.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace HospitalAPI.Controllers
 {

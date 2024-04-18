@@ -1,13 +1,8 @@
 ﻿using HospitalAPI.DTOs;
 using HospitalAPI.Models;
-using HospitalAPI.Repositorios;
 using HospitalAPI.Repositorios.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Identity.Client;
-using Microsoft.IdentityModel.Tokens;
-using System.Reflection.Metadata;
 using System.Security.Claims;
 
 namespace HospitalAPI.Controllers
@@ -17,10 +12,12 @@ namespace HospitalAPI.Controllers
     public class PacienteController : ControllerBase
     {
         private readonly IPacienteRepositorios _pacienteRepositorios;
+        private readonly ILogger<PacienteController> _logger;
 
-        public PacienteController(IPacienteRepositorios pacienteRepositorios)
+        public PacienteController(IPacienteRepositorios pacienteRepositorios, ILogger<PacienteController> logger)
         {
             _pacienteRepositorios = pacienteRepositorios;
+            _logger = logger;
         }
 
         [Authorize(Roles = "medico, admin")]
@@ -28,7 +25,9 @@ namespace HospitalAPI.Controllers
         [Route("All", Name = "BuscaTodosPacientes")]
         public async Task<ActionResult<List<PacienteModel>>> BuscarTodosPacientes()
         {
-            List<PacienteModel> paciente = await _pacienteRepositorios.BuscarTodosPacientes();
+            _logger.LogInformation($"Realizada consulta de todos os pacientes.");
+
+            List <PacienteModel> paciente = await _pacienteRepositorios.BuscarTodosPacientes();
 
             return Ok(paciente);
         }
@@ -37,6 +36,8 @@ namespace HospitalAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<PacienteModel>> BuscarPacientePorId(int id)
         {
+            _logger.LogInformation($"Realizada consulta de paciente - Id: {id}.");
+
             PacienteModel paciente = await _pacienteRepositorios.BuscarPacientePorId(id);
 
             return Ok(paciente);
@@ -45,6 +46,9 @@ namespace HospitalAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<PacienteModel>> Cadastrar([FromForm] PacienteRequestDto requestDto)
         {
+
+            _logger.LogInformation(message: "Paciente cadastrado.");
+
             if (requestDto.imgDoc == null || requestDto.imgDoc.Length == 0)
             {
                 return BadRequest("Nenhuma foto de documento foi carregada");
@@ -69,10 +73,13 @@ namespace HospitalAPI.Controllers
         [HttpGet("MostrarDocumento")]
         public async Task<ActionResult<PacienteModel>> BuscarDocPorId(int id)
         {
+            _logger.LogInformation($"Realizada busca de documento por Id: {id}");
+
             PacienteModel paciente = await _pacienteRepositorios.BuscarDocPorId(id);
 
             if (paciente.ImgDocumento == null)
             {
+                _logger.LogInformation($"Paciente não possui foto da carteira do convênio");
                 return BadRequest("Este paciente não possui foto da carteira do convênio");
             }
 
@@ -80,6 +87,7 @@ namespace HospitalAPI.Controllers
 
             if (imgPath is null)
             {
+                _logger.LogInformation($"Paciente não possui carteira do convênio");
                 return BadRequest("Este paciente não possui carteira do convênio");
             }
 
@@ -90,6 +98,7 @@ namespace HospitalAPI.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<PacienteModel>> Atualizar([FromBody] PacienteModel pacienteModel, int id)
         {
+            _logger.LogInformation($"Realizado update do paciente - {pacienteModel.Nome}");
             var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
             if(userIdClaim == null)
                 return Unauthorized("Token de autenticação inválido.");
@@ -124,6 +133,7 @@ namespace HospitalAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<PacienteModel>> Apagar([FromBody] int id)
         {
+            _logger.LogInformation($"Realizada exclusão do paciente {id}");
             bool apagado = await _pacienteRepositorios.Apagar(id);
             return Ok(apagado);
         }

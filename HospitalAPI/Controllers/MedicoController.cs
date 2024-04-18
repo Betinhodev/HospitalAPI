@@ -1,7 +1,6 @@
 ﻿using HospitalAPI.Models;
 using HospitalAPI.Repositorios.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HospitalAPI.Controllers

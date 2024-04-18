@@ -70,6 +70,74 @@ namespace HospitalAPI.Migrations
                     b.ToTable("Convenios");
                 });
 
+            modelBuilder.Entity("HospitalAPI.Models.ExameModel", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("DataAgendamento")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Descricao")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("MedicoResponsavelId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PacienteId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Tipo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Valor")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MedicoResponsavelId");
+
+                    b.HasIndex("PacienteId");
+
+                    b.ToTable("Exames");
+                });
+
+            modelBuilder.Entity("HospitalAPI.Models.LaudoModel", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ConsultaId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("DataCriacao")
+                        .HasMaxLength(255)
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Descrição")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<int>("MedicoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PacienteId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MedicoId");
+
+                    b.HasIndex("PacienteId");
+
+                    b.ToTable("Laudos");
+                });
+
             modelBuilder.Entity("HospitalAPI.Models.MedicoModel", b =>
                 {
                     b.Property<int>("MedicoId")
@@ -174,6 +242,10 @@ namespace HospitalAPI.Migrations
 
                     b.HasKey("RetornoId");
 
+                    b.HasIndex("MedicoId");
+
+                    b.HasIndex("PacienteId");
+
                     b.ToTable("Retornos");
                 });
 
@@ -196,14 +268,83 @@ namespace HospitalAPI.Migrations
                     b.Navigation("Paciente");
                 });
 
+            modelBuilder.Entity("HospitalAPI.Models.ExameModel", b =>
+                {
+                    b.HasOne("HospitalAPI.Models.MedicoModel", "MedicoResponsavel")
+                        .WithMany("Exame")
+                        .HasForeignKey("MedicoResponsavelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HospitalAPI.Models.PacienteModel", "Paciente")
+                        .WithMany("Exame")
+                        .HasForeignKey("PacienteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MedicoResponsavel");
+
+                    b.Navigation("Paciente");
+                });
+
+            modelBuilder.Entity("HospitalAPI.Models.LaudoModel", b =>
+                {
+                    b.HasOne("HospitalAPI.Models.MedicoModel", "Medico")
+                        .WithMany("Laudo")
+                        .HasForeignKey("MedicoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HospitalAPI.Models.PacienteModel", "Paciente")
+                        .WithMany("Laudo")
+                        .HasForeignKey("PacienteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Medico");
+
+                    b.Navigation("Paciente");
+                });
+
+            modelBuilder.Entity("HospitalAPI.Models.RetornoModel", b =>
+                {
+                    b.HasOne("HospitalAPI.Models.MedicoModel", "Medico")
+                        .WithMany("Retorno")
+                        .HasForeignKey("MedicoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HospitalAPI.Models.PacienteModel", "Paciente")
+                        .WithMany("Retorno")
+                        .HasForeignKey("PacienteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Medico");
+
+                    b.Navigation("Paciente");
+                });
+
             modelBuilder.Entity("HospitalAPI.Models.MedicoModel", b =>
                 {
                     b.Navigation("Consulta");
+
+                    b.Navigation("Exame");
+
+                    b.Navigation("Laudo");
+
+                    b.Navigation("Retorno");
                 });
 
             modelBuilder.Entity("HospitalAPI.Models.PacienteModel", b =>
                 {
                     b.Navigation("Consulta");
+
+                    b.Navigation("Exame");
+
+                    b.Navigation("Laudo");
+
+                    b.Navigation("Retorno");
                 });
 #pragma warning restore 612, 618
         }
