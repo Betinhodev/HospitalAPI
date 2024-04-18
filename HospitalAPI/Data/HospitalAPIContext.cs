@@ -12,7 +12,10 @@ namespace HospitalAPI.Data
         public DbSet<MedicoModel> Medicos { get; set;}
         public DbSet<ConsultaModel> Consultas { get; set;}
         public DbSet<ConvenioModel> Convenios { get; set; }
-        public DbSet<RetornoModel> Retornos {  get; set; }
+        public DbSet<RetornoModel> Retornos { get; set; }
+        public DbSet<LaudoModel> Laudos { get; set; }
+        public DbSet<ExameModel> Exames {  get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -21,6 +24,8 @@ namespace HospitalAPI.Data
             modelBuilder.ApplyConfiguration(new ConsultaMap());
             modelBuilder.ApplyConfiguration(new ConvenioMap());
             modelBuilder.ApplyConfiguration(new RetornoMap());
+            modelBuilder.ApplyConfiguration(new LaudoMap());
+            modelBuilder.ApplyConfiguration(new ExameMap());
 
             base.OnModelCreating(modelBuilder);
         }

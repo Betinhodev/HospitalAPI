@@ -1,4 +1,5 @@
 ﻿using HospitalAPI.Data;
+using HospitalAPI.Enums;
 using HospitalAPI.Models;
 using HospitalAPI.Repositorios.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -26,7 +27,7 @@ namespace HospitalAPI.Repositorios
         {
 
             await _context.Consultas.AddAsync(consulta);
-            consulta.DataDoCadastro = DateTime.Now;
+            consulta.DataDoCadastro = DateTime.UtcNow;
             await _context.SaveChangesAsync();
 
             return consulta;
@@ -65,6 +66,13 @@ namespace HospitalAPI.Repositorios
             await _context.SaveChangesAsync();
 
             return true;
+        }
+
+        public async Task<List<ConsultaModel>> FiltrarConsultas(int pacienteId, StatusConsulta status)
+        {
+            return await _context.Consultas.Where(c => c.PacienteId == pacienteId).Where(s => s.Status == status).ToListAsync();
+
+            
         }
     }
 }

@@ -3,11 +3,11 @@ using HospitalAPI.Data;
 using HospitalAPI.Repositorios;
 using HospitalAPI.Repositorios.Interfaces;
 using HospitalAPI.Services;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using NLog.Web;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -80,6 +80,8 @@ builder.Services.AddScoped<IConvenioRepositorios, ConvenioRepositorios> ();
 builder.Services.AddScoped<IRetornoRepositorios, RetornoRepositorios> ();
 builder.Services.AddScoped<AuthenticationService>();
 
+builder.Logging.ClearProviders();
+builder.Host.UseNLog();
 
 var app = builder.Build();
 

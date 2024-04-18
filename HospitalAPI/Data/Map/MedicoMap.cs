@@ -14,6 +14,9 @@ namespace HospitalAPI.Data.Map
             builder.Property(x => x.Nome).IsRequired().HasMaxLength(255);
             builder.Property(x => x.ConsultaId);
             builder.HasMany(x => x.Consulta);
+            builder.HasMany(x => x.Laudo);
+            builder.HasMany(x => x.Exame);
+            builder.HasMany(x => x.Retorno);
         }
 
     }

@@ -1,8 +1,5 @@
-﻿using HospitalAPI.Data;
-using HospitalAPI.DTOs;
-using HospitalAPI.Models;
+﻿using HospitalAPI.DTOs;
 using HospitalAPI.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HospitalAPI.Controllers

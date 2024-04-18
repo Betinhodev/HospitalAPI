@@ -26,6 +26,7 @@ namespace HospitalAPI.Repositorios
 
         public async Task<PacienteModel> Cadastrar(PacienteModel paciente)
         {
+
             await _context.Pacientes.AddAsync(paciente);
             await _context.SaveChangesAsync();
 
