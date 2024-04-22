@@ -10,6 +10,8 @@
 
         public string? Nome { get; set; }
 
+        public string? ImgDocumento { get; set; }
+
         public int? ConsultaId { get; set; }
         public ICollection<ConsultaModel> Consulta { get; set; } = [];
 

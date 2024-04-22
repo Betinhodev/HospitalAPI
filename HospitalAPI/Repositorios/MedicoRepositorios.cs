@@ -1,6 +1,8 @@
 ﻿using HospitalAPI.Data;
+using HospitalAPI.DTOs;
 using HospitalAPI.Models;
 using HospitalAPI.Repositorios.Interfaces;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace HospitalAPI.Repositorios
@@ -8,10 +10,12 @@ namespace HospitalAPI.Repositorios
     public class MedicoRepositorios : IMedicoRepositorios
     {
         private readonly HospitalAPIContext _context;
+        private readonly ILogger<MedicoRepositorios> _logger;
 
-        public MedicoRepositorios(HospitalAPIContext hospitalAPIContext)
+        public MedicoRepositorios(HospitalAPIContext hospitalAPIContext, ILogger<MedicoRepositorios> logger)
         {
             _context = hospitalAPIContext;
+            _logger = logger;
         }
         public async Task<List<MedicoModel>> BuscarTodosMedicos()
         {
@@ -29,15 +33,35 @@ namespace HospitalAPI.Repositorios
 
             return medico;
         }
-        public async Task<MedicoModel> Atualizar(MedicoModel medico, int id)
+
+        public async Task<MedicoModel> BuscarDocPorId(int id)
+        {
+            return await _context.Medicos.FirstOrDefaultAsync(x => x.MedicoId == id);
+        }
+
+        public async Task<MedicoModel> Atualizar(MedicoRequestDto medico, int id)
         {
             MedicoModel medicoPorId = await BuscarMedicoPorId(id);
 
             if(medicoPorId == null)
             {
+                _logger.LogWarning($"O Medico para o ID: {id} não foi encontrado no banco de dados.");
                 throw new Exception($"O Medico com ID: {id} não foi localizado no banco de dados.");
             }
+            if (medico.imgDoc == null || medico.imgDoc.Length == 0)
+            {
+                throw new Exception("Nenhuma foto de documento foi carregada");
+            }
 
+            Guid guidDocConvenio = Guid.NewGuid();
+            var imgPath = Path.Combine("Imagens/", $"{guidDocConvenio}");
+
+            using (FileStream stream = System.IO.File.Create(imgPath))
+            {
+                await medico.imgDoc.CopyToAsync(stream);
+            }
+
+            medicoPorId.ImgDocumento = imgPath;
             medicoPorId.Nome = medico.Nome;
 
             _context.Medicos.Update(medicoPorId);
@@ -52,6 +76,7 @@ namespace HospitalAPI.Repositorios
 
             if (medicoPorId == null)
             {
+                _logger.LogWarning($"O Medico para o ID: {id} não foi encontrado no banco de dados.");
                 throw new Exception($"O Medico com ID: {id} não foi localizado no banco de dados.");
             }
 

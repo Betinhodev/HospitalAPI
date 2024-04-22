@@ -10,10 +10,12 @@ namespace HospitalAPI.Repositorios
     public class PacienteRepositorios : IPacienteRepositorios
     {
         private readonly HospitalAPIContext _context;
-        
-        public PacienteRepositorios(HospitalAPIContext hospitalAPIContext) 
+        private readonly ILogger<PacienteRepositorios> _logger;
+
+        public PacienteRepositorios(HospitalAPIContext hospitalAPIContext, ILogger<PacienteRepositorios> logger) 
         {
             _context = hospitalAPIContext;
+            _logger = logger;
         }
         public async Task<List<PacienteModel>> BuscarTodosPacientes()
         {
@@ -44,6 +46,7 @@ namespace HospitalAPI.Repositorios
 
             if (pacientePorId == null)
             {
+                _logger.LogWarning($"Paciente para o ID: {id} não foi encontrado no banco de dados.");
                 throw new Exception($"Paciente para o ID: {id} não foi encontrado no banco de dados.");
             }
 
@@ -66,6 +69,7 @@ namespace HospitalAPI.Repositorios
 
             if(pacientePorId == null)
             {
+                _logger.LogWarning($"Paciente para o ID: {id} não foi encontrado no banco de dados.");
                 throw new Exception($"Paciente para o ID: {id} não foi encontrado no banco de dados.");
             }
 
