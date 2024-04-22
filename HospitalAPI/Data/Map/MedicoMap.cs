@@ -9,10 +9,11 @@ namespace HospitalAPI.Data.Map
         public void Configure(EntityTypeBuilder<MedicoModel> builder)
         {
             builder.HasKey(x => x.MedicoId);
-            builder.Property(x => x.CPF).IsRequired().HasMaxLength(15);
-            builder.Property(x => x.Password).IsRequired().HasMaxLength(30);
-            builder.Property(x => x.Nome).IsRequired().HasMaxLength(255);
+            builder.Property(x => x.CPF).HasMaxLength(15);
+            builder.Property(x => x.Password).HasMaxLength(30);
+            builder.Property(x => x.Nome).HasMaxLength(255);
             builder.Property(x => x.ConsultaId);
+            builder.Property(x => x.ImgDocumento);
             builder.HasMany(x => x.Consulta);
             builder.HasMany(x => x.Laudo);
             builder.HasMany(x => x.Exame);

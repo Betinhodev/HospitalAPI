@@ -85,6 +85,7 @@ namespace HospitalAPI.Controllers
         {
             ConsultaModel consulta = await _consultaRepositorios.BuscarConsultaPorId(id);
             PacienteModel paciente = await _pacienteRepositorios.BuscarPacientePorId(consulta.PacienteId);
+            _logger.LogInformation($"Gerado fatura da consulta: {consulta.ConsultaId}");
 
             string HtmlContent = @"<!DOCTYPE html>
             <html>
@@ -209,11 +210,12 @@ namespace HospitalAPI.Controllers
         }
 
         [HttpGet("FiltrarConsultas")]
-        public async Task<ActionResult<ConsultaModel>> FiltrarConsultas([FromQuery] int pacienteId, StatusConsulta status)
+        public async Task<ActionResult<ConsultaModel>> FiltrarConsultas([FromForm] int pacienteId, StatusConsulta status)
         {
+
             //Busca paciente por Id
             List<ConsultaModel> consulta = await _consultaRepositorios.FiltrarConsultas(pacienteId, status);
-
+            _logger.LogInformation($"Realizada busca das consultas do paciente - Id: {pacienteId} com Status: {status}");
             return Ok(consulta);
         }
     }

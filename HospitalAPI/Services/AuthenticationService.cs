@@ -10,11 +10,13 @@ namespace HospitalAPI.Services
     {
         private readonly IConfiguration _configuration;
         private readonly HospitalAPIContext _context;
+        private readonly ILogger<AuthenticationService> _logger;
 
-        public AuthenticationService(IConfiguration configuration, HospitalAPIContext context)
+        public AuthenticationService(IConfiguration configuration, HospitalAPIContext context, ILogger<AuthenticationService> logger)
         {
             _configuration = configuration;
             _context = context;
+            _logger = logger;
         }
 
         public object AuthenticateUser(string username, string password)
@@ -23,7 +25,7 @@ namespace HospitalAPI.Services
             var patient = _context.Pacientes.FirstOrDefault(p => p.CPF == username && p.Password == password);
             if (patient != null)
             {
-                
+                _logger.LogInformation($"Paciente {patient.Nome} autenticado.");
                 return GenerateToken(patient.PacienteId, "paciente");
             }
 
@@ -31,14 +33,14 @@ namespace HospitalAPI.Services
             var doctor = _context.Medicos.FirstOrDefault(d => d.CPF == username && d.Password == password);
             if (doctor != null)
             {
-
+                _logger.LogInformation($"Doutor {doctor.Nome} autenticado.");
                 return GenerateToken(doctor.MedicoId, "medico");
             }
 
             
             if (username == "admin" && password == "root")
             {
-
+                _logger.LogInformation($"Admin autenticado.");
                 return GenerateToken(1, "admin");
             }
 
