@@ -28,6 +28,14 @@ namespace HospitalAPI.Repositorios
 
         public async Task<MedicoModel> Cadastrar(MedicoModel medico)
         {
+            var medicoExistente = _context.Medicos.FirstOrDefaultAsync(x => x.CPF ==  medico.CPF);
+
+            if(medicoExistente != null)
+            {
+                _logger.LogWarning("CPF já cadastrado.");
+                throw new Exception("CPF já cadastrado.");
+            }
+
             await _context.Medicos.AddAsync(medico);
             await _context.SaveChangesAsync();
 

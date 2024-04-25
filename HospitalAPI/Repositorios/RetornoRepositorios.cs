@@ -9,11 +9,13 @@ namespace HospitalAPI.Repositorios
     {
         private readonly HospitalAPIContext _context;
         private readonly IConsultaRepositorios _consultaRepositorios;
+        private readonly ILogger<RetornoRepositorios> _logger;
 
-        public RetornoRepositorios(HospitalAPIContext hospitalAPIContext, IConsultaRepositorios consultaRepositorios)
+        public RetornoRepositorios(HospitalAPIContext hospitalAPIContext, IConsultaRepositorios consultaRepositorios, ILogger<RetornoRepositorios> logger)
         {
             _context = hospitalAPIContext;
             _consultaRepositorios = consultaRepositorios;
+            _logger = logger;
         }
         public async Task<List<RetornoModel>> BuscarTodosRetornos()
         {
@@ -30,10 +32,12 @@ namespace HospitalAPI.Repositorios
 
             if (consulta == null)
             {
+                _logger.LogWarning("Consulta não localizada no banco de dados, verifique se a ID está correta.");
                 throw new BadHttpRequestException("Consulta não localizada no banco de dados, verifique se a ID está correta.");
             }
             if (consulta.DataDoCadastro < DateTime.Now.AddDays(-30))
             {
+                _logger.LogWarning("A Consulta especificada foi cadastrada a 30 dias ou mais, neste caso é necessário a abertura de uma nova consulta.");
                 throw new BadHttpRequestException("A Consulta especificada foi cadastrada a 30 dias ou mais, neste caso é necessário a abertura de uma nova consulta.");
             }
 
@@ -49,6 +53,7 @@ namespace HospitalAPI.Repositorios
 
             if (retornoPorId == null)
             {
+                _logger.LogWarning($"O Retorno com ID: {id} não foi localizada no banco de dados.");
                 throw new Exception($"O Retorno com ID: {id} não foi localizada no banco de dados.");
             }
 
@@ -69,6 +74,7 @@ namespace HospitalAPI.Repositorios
 
             if (retornoPorId == null)
             {
+                _logger.LogWarning($"O Retorno com ID: {id} não foi localizada no banco de dados.");
                 throw new Exception($"O Retorno com ID: {id} não foi localizada no banco de dados.");
             }
 

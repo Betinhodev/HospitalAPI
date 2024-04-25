@@ -28,6 +28,14 @@ namespace HospitalAPI.Repositorios
 
         public async Task<PacienteModel> Cadastrar(PacienteModel paciente)
         {
+            
+            var pacienteExistente = _context.Pacientes.FirstOrDefaultAsync(x => x.CPF == paciente.CPF);
+
+            if(pacienteExistente != null) 
+            {
+                _logger.LogWarning("CPF já cadastrado no banco de dados.");
+                throw new Exception("CPF já cadastrado no banco de dados.");
+            }
 
             await _context.Pacientes.AddAsync(paciente);
             await _context.SaveChangesAsync();

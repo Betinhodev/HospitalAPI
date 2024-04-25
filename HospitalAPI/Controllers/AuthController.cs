@@ -9,10 +9,12 @@ namespace HospitalAPI.Controllers
     public class AuthController : ControllerBase
     {
         private readonly AuthenticationService _authenticationService;
+        private readonly ILogger<AuthController> _logger;
 
-        public AuthController(AuthenticationService authenticationService)
+        public AuthController(AuthenticationService authenticationService, ILogger<AuthController> logger)
         {
             _authenticationService = authenticationService;
+            _logger = logger;
         }
 
         [HttpPost]
@@ -20,9 +22,12 @@ namespace HospitalAPI.Controllers
         {
            
             var token = _authenticationService.AuthenticateUser(auth.CPF, auth.Password);
-            
-            if(token == null)
-            return BadRequest("usuário ou senha incorreta.");
+
+            if (token == null)
+            {
+                _logger.LogWarning("usuário ou senha incorreta.");
+                return BadRequest("usuário ou senha incorreta.");
+            }
 
             return Ok(new { token });
         }
