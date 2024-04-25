@@ -47,12 +47,13 @@ namespace HospitalAPI.Controllers
         public async Task<ActionResult<PacienteModel>> Cadastrar([FromForm] PacienteRequestDto requestDto)
         {
 
-            _logger.LogInformation(message: "Paciente cadastrado.");
 
             if (requestDto.imgDoc == null || requestDto.imgDoc.Length == 0)
             {
                 return BadRequest("Nenhuma foto de documento foi carregada");
             }
+
+
 
             Guid guidDocConvenio = Guid.NewGuid();
             var imgPath = Path.Combine("Imagens/", $"{guidDocConvenio}");
@@ -66,6 +67,7 @@ namespace HospitalAPI.Controllers
 
             PacienteModel paciente = await _pacienteRepositorios.Cadastrar(requestDto);
 
+            _logger.LogInformation(message: "Paciente cadastrado.");
 
             return Ok(paciente);
         }
@@ -106,14 +108,18 @@ namespace HospitalAPI.Controllers
             int authenticatedUserId = int.Parse(userIdClaim.Value);
 
             if (id != authenticatedUserId)
+            {
+                _logger.LogWarning("Você não tem permissão para atualizar os dados de outro paciente.");
                 return Forbid("Você não tem permissão para atualizar os dados de outro paciente.");
+            }
 
             if (User.IsInRole("paciente"))
             {
 
                 PacienteModel pacienteExistente = await _pacienteRepositorios.BuscarPacientePorId(id);
                 if (pacienteExistente == null)
-                { 
+                {
+                    _logger.LogWarning("Paciente não encontrado");
                     return NotFound("Paciente não encontrado"); 
                 }
 
