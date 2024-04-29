@@ -2,6 +2,7 @@
 using HospitalAPI.DTOs;
 using HospitalAPI.Models;
 using HospitalAPI.Repositorios.Interfaces;
+using HospitalAPI.Utils;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,6 +12,7 @@ namespace HospitalAPI.Repositorios
     {
         private readonly HospitalAPIContext _context;
         private readonly ILogger<MedicoRepositorios> _logger;
+        PassHasher<MedicoModel> hashedPass = new PassHasher<MedicoModel>();
 
         public MedicoRepositorios(HospitalAPIContext hospitalAPIContext, ILogger<MedicoRepositorios> logger)
         {
@@ -26,15 +28,25 @@ namespace HospitalAPI.Repositorios
             return await _context.Medicos.FirstOrDefaultAsync(x => x.MedicoId == id);
         }
 
-        public async Task<MedicoModel> Cadastrar(MedicoModel medico)
+        public async Task<MedicoModel> Cadastrar(MedicoRequestDto request)
         {
-            var medicoExistente = _context.Medicos.FirstOrDefaultAsync(x => x.CPF ==  medico.CPF);
+            var medicoExistente = await _context.Medicos.FirstOrDefaultAsync(x => x.CPF == request.CPF);
 
             if(medicoExistente != null)
             {
                 _logger.LogWarning("CPF já cadastrado.");
                 throw new Exception("CPF já cadastrado.");
             }
+
+            MedicoModel medico = new()
+            {
+                CPF = request.CPF,
+                Nome = request.Nome,
+                Password = request.Password
+            };
+
+            var senhaMedico = hashedPass.HashPassword(medico, request.Password);
+            medico.Password = senhaMedico;
 
             await _context.Medicos.AddAsync(medico);
             await _context.SaveChangesAsync();

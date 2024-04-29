@@ -28,10 +28,10 @@ namespace HospitalAPI.Repositorios
             return await _context.Pacientes.Include(x => x.Consulta).FirstOrDefaultAsync(x => x.PacienteId == id);
         }
 
-        public async Task<PacienteModel> Cadastrar(PacienteRequestDto requestDto,PatientRegisterDto request)
+        public async Task<PacienteModel> Cadastrar(PacienteRequestDto requestDto)
         {
             
-            var pacienteExistente = _context.Pacientes.FirstOrDefaultAsync(x => x.CPF == request.CPF);
+            var pacienteExistente = await _context.Pacientes.FirstOrDefaultAsync(x => x.CPF == requestDto.CPF);
 
             if(pacienteExistente != null) 
             {
@@ -41,17 +41,17 @@ namespace HospitalAPI.Repositorios
 
             PacienteModel paciente = new()
             {
-                Nome = request.Nome,
-                CPF = request.CPF,
-                Password = request.Password,
-                Endereco = request.Endereco,
-                DataDeNascimento = request.DataDeNascimento,
-                ImgDocumento = request.ImgDocumento,
-                TemConvenio = request.TemConvenio,
-                ConvenioId = request.ConvenioId
+                Nome = requestDto.Nome,
+                CPF = requestDto.CPF,
+                Password = requestDto.Password,
+                Endereco = requestDto.Endereco,
+                DataDeNascimento = requestDto.DataDeNascimento,
+                ImgDocumento = requestDto.ImgDocumento,
+                TemConvenio = requestDto.TemConvenio,
+                ConvenioId = requestDto.ConvenioId
             };
 
-            var senhaPaciente = hashedPass.HashPassword(paciente, request.Password);
+            var senhaPaciente = hashedPass.HashPassword(paciente, requestDto.Password);
             paciente.Password = senhaPaciente;
 
             await _context.Pacientes.AddAsync(paciente);

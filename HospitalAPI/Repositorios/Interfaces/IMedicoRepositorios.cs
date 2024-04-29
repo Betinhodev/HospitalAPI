@@ -9,7 +9,7 @@ namespace HospitalAPI.Repositorios.Interfaces
 
         Task<MedicoModel> BuscarMedicoPorId(int id);
 
-        Task<MedicoModel> Cadastrar(MedicoModel medico);
+        Task<MedicoModel> Cadastrar(MedicoRequestDto medico);
 
         Task<MedicoModel> BuscarDocPorId(int id);
 

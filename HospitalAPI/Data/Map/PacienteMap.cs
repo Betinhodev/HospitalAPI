@@ -10,7 +10,7 @@ namespace HospitalAPI.Data.Map
         {
             builder.HasKey(x => x.PacienteId);
             builder.Property(x => x.CPF).IsRequired().HasMaxLength(15);
-            builder.Property(x => x.Password).IsRequired().HasMaxLength(30);
+            builder.Property(x => x.Password).IsRequired().HasMaxLength(255);
             builder.Property(x => x.Nome).IsRequired().HasMaxLength(255);
             builder.Property(x => x.DataDeNascimento).IsRequired();
             builder.Property(x => x.Endereco).IsRequired();

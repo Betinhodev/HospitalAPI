@@ -10,7 +10,7 @@ namespace HospitalAPI.Data.Map
         {
             builder.HasKey(x => x.MedicoId);
             builder.Property(x => x.CPF).HasMaxLength(15);
-            builder.Property(x => x.Password).HasMaxLength(30);
+            builder.Property(x => x.Password).HasMaxLength(255);
             builder.Property(x => x.Nome).HasMaxLength(255);
             builder.Property(x => x.ConsultaId);
             builder.Property(x => x.ImgDocumento);
