@@ -1,4 +1,7 @@
 ﻿using HospitalAPI.Data;
+using HospitalAPI.DTOs;
+using HospitalAPI.Models;
+using HospitalAPI.Utils;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -11,6 +14,7 @@ namespace HospitalAPI.Services
         private readonly IConfiguration _configuration;
         private readonly HospitalAPIContext _context;
         private readonly ILogger<AuthenticationService> _logger;
+        PassHasher<PacienteModel> hashedPass = new PassHasher<PacienteModel>();
 
         public AuthenticationService(IConfiguration configuration, HospitalAPIContext context, ILogger<AuthenticationService> logger)
         {
@@ -19,10 +23,11 @@ namespace HospitalAPI.Services
             _logger = logger;
         }
 
-        public object AuthenticateUser(string username, string password)
+        public object AuthenticateUser(AuthRequest authRequest)
         {
             
-            var patient = _context.Pacientes.FirstOrDefault(p => p.CPF == username && p.Password == password);
+            var patient = _context.Pacientes.FirstOrDefault(p => p.CPF == authRequest.CPF && p.Password == authRequest.Password);
+            var isValidPass = hashedPass.VerifyHashedPassword(patient, patient.Password, authRequest.Password);
             if (patient != null)
             {
                 _logger.LogInformation($"Paciente {patient.Nome} autenticado.");
@@ -30,7 +35,7 @@ namespace HospitalAPI.Services
             }
 
             
-            var doctor = _context.Medicos.FirstOrDefault(d => d.CPF == username && d.Password == password);
+            var doctor = _context.Medicos.FirstOrDefault(d => d.CPF == authRequest.CPF && d.Password == authRequest.Password);
             if (doctor != null)
             {
                 _logger.LogInformation($"Doutor {doctor.Nome} autenticado.");
@@ -38,7 +43,7 @@ namespace HospitalAPI.Services
             }
 
             
-            if (username == "admin" && password == "root")
+            if (authRequest.CPF == "admin" && authRequest.Password == "root")
             {
                 _logger.LogInformation($"Admin autenticado.");
                 return GenerateToken(1, "admin");

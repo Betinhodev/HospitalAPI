@@ -21,7 +21,7 @@ namespace HospitalAPI.Controllers
         public IActionResult Auth([FromForm] AuthRequest auth)
         {
            
-            var token = _authenticationService.AuthenticateUser(auth.CPF, auth.Password);
+            var token = _authenticationService.AuthenticateUser(auth);
 
             if (token == null)
             {

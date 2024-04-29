@@ -1,4 +1,5 @@
-﻿using HospitalAPI.Models;
+﻿using HospitalAPI.DTOs;
+using HospitalAPI.Models;
 
 namespace HospitalAPI.Repositorios.Interfaces
 {
@@ -10,7 +11,7 @@ namespace HospitalAPI.Repositorios.Interfaces
 
         Task<PacienteModel> BuscarDocPorId(int id);
 
-        Task<PacienteModel> Cadastrar(PacienteModel paciente);
+        Task<PacienteModel> Cadastrar(PacienteRequestDto requestDto ,PatientRegisterDto request);
 
         Task<PacienteModel> Atualizar(PacienteModel paciente, int id);
 

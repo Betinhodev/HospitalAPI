@@ -44,7 +44,7 @@ namespace HospitalAPI.Controllers
         }
         [Authorize(Roles = "medico, admin")]
         [HttpPost]
-        public async Task<ActionResult<PacienteModel>> Cadastrar([FromForm] PacienteRequestDto requestDto)
+        public async Task<ActionResult<PacienteModel>> Cadastrar([FromForm] PacienteRequestDto requestDto, PatientRegisterDto patientRegister)
         {
 
 
@@ -65,7 +65,7 @@ namespace HospitalAPI.Controllers
 
             requestDto.ImgDocumento = imgPath;
 
-            PacienteModel paciente = await _pacienteRepositorios.Cadastrar(requestDto);
+            PacienteModel paciente = await _pacienteRepositorios.Cadastrar(requestDto, patientRegister);
 
             _logger.LogInformation(message: "Paciente cadastrado.");
 
