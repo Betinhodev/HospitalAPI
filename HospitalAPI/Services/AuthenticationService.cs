@@ -1,7 +1,11 @@
 ﻿using HospitalAPI.Data;
 using HospitalAPI.DTOs;
 using HospitalAPI.Models;
+using HospitalAPI.Repositorios;
+using HospitalAPI.Repositorios.Interfaces;
 using HospitalAPI.Utils;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -14,7 +18,8 @@ namespace HospitalAPI.Services
         private readonly IConfiguration _configuration;
         private readonly HospitalAPIContext _context;
         private readonly ILogger<AuthenticationService> _logger;
-        PassHasher<PacienteModel> hashedPass = new PassHasher<PacienteModel>();
+        PassHasher<PacienteModel> hashedPatientPass = new PassHasher<PacienteModel>();
+        PassHasher<MedicoModel> hashedDoctorPass = new PassHasher<MedicoModel>();
 
         public AuthenticationService(IConfiguration configuration, HospitalAPIContext context, ILogger<AuthenticationService> logger)
         {
@@ -25,23 +30,31 @@ namespace HospitalAPI.Services
 
         public object AuthenticateUser(AuthRequest authRequest)
         {
+
+            var patient = _context.Pacientes.FirstOrDefault(x => x.CPF ==  authRequest.CPF);
             
-            var patient = _context.Pacientes.FirstOrDefault(p => p.CPF == authRequest.CPF && p.Password == authRequest.Password);
-            var isValidPass = hashedPass.VerifyHashedPassword(patient, patient.Password, authRequest.Password);
             if (patient != null)
             {
-                _logger.LogInformation($"Paciente {patient.Nome} autenticado.");
-                return GenerateToken(patient.PacienteId, "paciente");
+                var isValidPass = hashedPatientPass.VerifyHashedPassword(patient, patient.Password, authRequest.Password);
+                if (isValidPass == PasswordVerificationResult.Success)
+                {
+                    _logger.LogInformation($"Paciente {patient.Nome} autenticado.");
+                    return GenerateToken(patient.PacienteId, "paciente");
+                }
             }
 
-            
-            var doctor = _context.Medicos.FirstOrDefault(d => d.CPF == authRequest.CPF && d.Password == authRequest.Password);
+
+            var doctor = _context.Medicos.FirstOrDefault(x => x.CPF == authRequest.CPF);
             if (doctor != null)
             {
-                _logger.LogInformation($"Doutor {doctor.Nome} autenticado.");
-                return GenerateToken(doctor.MedicoId, "medico");
-            }
+                var isValidPass = hashedDoctorPass.VerifyHashedPassword(doctor, doctor.Password, authRequest.Password);
+                if (isValidPass == PasswordVerificationResult.Success)
+                {
+                    _logger.LogInformation($"Doutor {doctor.Nome} autenticado.");
+                    return GenerateToken(doctor.MedicoId, "medico");
 
+                }
+            }
             
             if (authRequest.CPF == "admin" && authRequest.Password == "root")
             {

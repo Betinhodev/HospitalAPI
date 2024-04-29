@@ -11,7 +11,7 @@ namespace HospitalAPI.Repositorios.Interfaces
 
         Task<PacienteModel> BuscarDocPorId(int id);
 
-        Task<PacienteModel> Cadastrar(PacienteRequestDto requestDto ,PatientRegisterDto request);
+        Task<PacienteModel> Cadastrar(PacienteRequestDto requestDto);
 
         Task<PacienteModel> Atualizar(PacienteModel paciente, int id);
 
